@@ -16,28 +16,11 @@ const usuariosGet = (req = request, res = response) => {
     })
 };
 
-const usuariosPut = (req, res) => {
-    const { id } = req.params;
-
-    res.json({
-        msg: 'put API - controlador',
-        id
-    })
-};
-
 const usuariosPost = async (req, res) => {
 
-    
+
     const { nombre, correo, password, rol } = req.body;
     const usuario = new Usuario({ nombre, correo, password, rol });
-
-    // Verificar si el correo existe.
-    const existeEmail = await Usuario.findOne({ correo });
-    if (existeEmail) {
-        return res.status(400).json({
-            msg: 'Ese correo ya está registrado'
-        })
-    }
 
     // Encriptar la contraseña
     const salt = bcryptjs.genSaltSync();
@@ -47,6 +30,24 @@ const usuariosPost = async (req, res) => {
     await usuario.save();
 
     res.json({
+        usuario
+    })
+};
+
+const usuariosPut = async (req, res) => {
+    const { id } = req.params;
+    const { password, google, correo, ...resto } = req.body
+
+    // TODO validar contra base de datos
+    if (password) {
+        // Encriptar la contraseña
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync(password, salt);
+    }
+    const usuario = await Usuario.findByIdAndUpdate(id, resto)
+
+    res.json({
+        msg: 'put API - controlador',
         usuario
     })
 };
@@ -61,7 +62,7 @@ const usuariosDelete = (req, res) => {
 
 module.exports = {
     usuariosGet,
-    usuariosPut,
     usuariosPost,
+    usuariosPut,
     usuariosDelete
 };
