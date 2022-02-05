@@ -3,17 +3,13 @@ const bcryptjs = require('bcryptjs');
 
 const Usuario = require('../models/usuario');
 
-const usuariosGet = (req = request, res = response) => {
-    const { q, nombre = 'No name', id, page, limit } = req.query;
+const usuariosGet = async (req = request, res = response) => {
+    const {limite = 5, desde = 0} = req.query;
+    const usuarios = await Usuario.find()
+    .skip(Number(desde))
+    .limit(Number(limite));
 
-    res.json({
-        msg: 'get API - controlador',
-        q,
-        nombre,
-        id,
-        page,
-        limit
-    })
+    res.json(usuarios)
 };
 
 const usuariosPost = async (req, res) => {
@@ -36,7 +32,7 @@ const usuariosPost = async (req, res) => {
 
 const usuariosPut = async (req, res) => {
     const { id } = req.params;
-    const {_id, password, google, correo, ...resto } = req.body
+    const { _id, password, google, correo, ...resto } = req.body
 
     // TODO validar contra base de datos
     if (password) {
@@ -46,10 +42,7 @@ const usuariosPut = async (req, res) => {
     }
     const usuario = await Usuario.findByIdAndUpdate(id, resto)
 
-    res.json({
-        msg: 'put API - controlador',
-        usuario
-    })
+    res.json(usuario)
 };
 
 const usuariosDelete = (req, res) => {
