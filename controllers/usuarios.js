@@ -5,7 +5,7 @@ const Usuario = require('../models/usuario');
 
 const usuariosGet = async (req = request, res = response) => {
     const { limite = 5, desde = 0 } = req.query;
-    const query = {estado:true};
+    const query = { estado: true };
 
     const [total, usuarios] = await Promise.all([
         Usuario.countDocuments(query),
@@ -53,10 +53,16 @@ const usuariosPut = async (req, res) => {
     res.json(usuario)
 };
 
-const usuariosDelete = (req, res) => {
-    res.json({
-        msg: 'delete API - controlador'
-    })
+const usuariosDelete = async (req, res) => {
+
+    const { id } = req.params;
+
+    // Lo borramos fisicamente (NO RECOMENDABLE)
+    // const usuario = await Usuario.findByIdAndDelete(id);
+
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false })
+
+    res.json(usuario)
 };
 
 
