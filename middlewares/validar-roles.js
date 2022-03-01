@@ -10,7 +10,7 @@ const esAdminRole = (req, res = response, next) => {
 
     const { rol, nombre } = req.usuario;
 
-    if(rol !== ADMIN_ROLE){
+    if (rol !== ADMIN_ROLE) {
         return res.status(401).json({
             msg: `${nombre} no es administrador - No puede hacer esto.`
         })
@@ -19,6 +19,16 @@ const esAdminRole = (req, res = response, next) => {
     next();
 };
 
+
+const tieneRole = (...roles) => {
+    return (req, res = response, next) => { 
+
+        console.log(roles);
+        next();
+    }
+}
+
 module.exports = {
-    esAdminRole
+    esAdminRole,
+    tieneRole
 };
